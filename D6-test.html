@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Control Dados Variable</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Diatype Mono Variable', monospace;
+      background: transparent;
+      color: #000;
+    }
+
+    .control {
+      margin-bottom: 16px;
+      font-size: 1.20rem;
+      font-weight: 300;
+      font-variation-settings: 'slnt' 0, 'MONO' 1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input[type="range"] {
+      width: 300px;
+      height: 2px;
+      background: #000;
+      border-radius: 1px;
+      appearance: none;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #000;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      margin-top: -5px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: #000;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    #sampleText {
+      font-family: 'Dados Variable', sans-serif;
+      font-size: 32px;
+      font-variation-settings: 'wght' 400, 'BRDE' 150;
+      text-align: center;
+      letter-spacing: -0.03em;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 20px;
+      background: transparent;
+      padding: 0;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="control">
+    <label>Tamaño: <span id="fontSizeValue">32</span>px</label>
+    <input type="range" id="fontSize" min="12" max="120" value="32" />
+  </div>
+
+  <div class="control">
+    <label>Peso (wght): <span id="wghtValue">400</span></label>
+    <input type="range" id="wght" min="300" max="500" value="400" step="1" />
+  </div>
+
+  <div class="control">
+    <label>Borde (BRDE): <span id="brdeValue">150</span></label>
+    <input type="range" id="brde" min="100" max="200" value="150" step="1" />
+  </div>
+
+  <div id="sampleText">
+    Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Ññ Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
+  </div>
+
+  <script>
+    const fontSizeSlider = document.getElementById('fontSize');
+    const wghtSlider = document.getElementById('wght');
+    const brdeSlider = document.getElementById('brde');
+
+    const fontSizeValue = document.getElementById('fontSizeValue');
+    const wghtValue = document.getElementById('wghtValue');
+    const brdeValue = document.getElementById('brdeValue');
+    const sampleText = document.getElementById('sampleText');
+
+    function updateFont() {
+      const fontSize = fontSizeSlider.value;
+      const wght = wghtSlider.value;
+      const brde = brdeSlider.value;
+
+      fontSizeValue.textContent = fontSize;
+      wghtValue.textContent = wght;
+      brdeValue.textContent = brde;
+
+      sampleText.style.fontSize = `${fontSize}px`;
+      sampleText.style.fontVariationSettings = `'wght' ${wght}, 'BRDE' ${brde}`;
+    }
+
+    fontSizeSlider.addEventListener('input', updateFont);
+    wghtSlider.addEventListener('input', updateFont);
+    brdeSlider.addEventListener('input', updateFont);
+
+    updateFont();
+  </script>
+
+</body>
+</html>
