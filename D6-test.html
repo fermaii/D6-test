@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>D6 Control</title>
   <style>
-    /* Cargar fuente desde GitHub (usa tu URL real) */
+    /* Cargar fuente */
     @font-face {
       font-family: 'Dados Variable';
       src: url('https://raw.githubusercontent.com/fermaii/D6-test/main/DadosVF.woff2') format('woff2');
@@ -15,7 +15,7 @@
 
     body {
       margin: 0;
-      padding: 16px 0;
+      padding: 8px 0 12px;
       font-family: 'Diatype Mono Variable', monospace;
       background: transparent;
       color: #000;
@@ -27,33 +27,45 @@
 
     .container {
       max-width: 100%;
-      padding: 0 10px;
+      padding: 0 8px;
       box-sizing: border-box;
     }
 
-    /* Sliders en una sola fila */
+    /* Sliders en fila */
     .sliders-row {
       display: flex;
+      flex-direction: row;
       gap: 16px;
       align-items: center;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
+      margin-bottom: 12px;
+      flex-wrap: nowrap;
     }
 
     .control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       flex: 1;
-      min-width: 120px;
-      max-width: 200px;
+      min-width: 140px;
+      max-width: 180px;
+      white-space: nowrap;
     }
 
     label {
       display: block;
-      margin-bottom: 6px;
-      font-size: 0.95em;
+      margin: 0;
+      font-size: 0.7em;
+      font-weight: 500;
+      white-space: nowrap;
+      text-align: right;
+      width: 52px;
+      flex-shrink: 0;
+      line-height: 1;
     }
 
     input[type="range"] {
-      width: 100%;
+      flex: 1;
+      width: auto;
       height: 2px;
       background: #000;
       border-radius: 1px;
@@ -62,137 +74,119 @@
       cursor: pointer;
     }
 
-    /* Thumbs: cuadrados negros */
+    /* Thumb: cuadrado con border-radius controlado por BRDE */
     input[type="range"]::-webkit-slider-thumb {
       appearance: none;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       background: #000;
       border: none;
       border-radius: 0;
       cursor: pointer;
-      margin-top: -5px;
-      transition: transform 0.1s ease; /* Suavizado visual */
+      /* El border-radius se aplica con JS */
     }
 
     input[type="range"]::-moz-range-thumb {
       appearance: none;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       background: #000;
       border: none;
       border-radius: 0;
       cursor: pointer;
     }
 
-    /* Efecto de suavizado al arrastrar */
-    input[type="range"]:active::-webkit-slider-thumb {
-      transform: scale(1.1);
-    }
-
-    /* Texto editable (el usuario lo cambia en Cargo Site) */
+    /* Texto editable y alineado a la izquierda */
     #sampleText {
       font-family: 'Dados Variable', sans-serif;
-      font-size: 4.5vw;
+      font-size: 3.8vw;
       font-variation-settings: 'wght' 400, 'BRDE' 150;
-      text-align: center;
-      letter-spacing: -0.03em;
-      line-height: 1.3;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 16px;
+      text-align: left;
+      letter-spacing: -0.002em;
+      line-height: 1.25;
+      margin: 0;
       background: transparent;
       padding: 0;
       border: none;
-      min-height: 40px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      min-height: 1.2em;
+      outline: none;
+      white-space: pre-wrap;
     }
 
     @media (min-width: 600px) {
       #sampleText {
-        font-size: 32px;
+        font-size: 28px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Sliders en fila -->
     <div class="sliders-row">
       <div class="control">
-        <label>Tamaño</label>
-        <input type="range" id="fontSize" min="12" max="120" value="32" step="0.1" />
+        <label>TAMAÑO</label>
+        <input type="range" id="fontSize" min="100" max="250" value="200" step="0.1" />
       </div>
-
       <div class="control">
-        <label>Peso</label>
+        <label>PESO</label>
         <input type="range" id="wght" min="300" max="500" value="400" step="0.1" />
       </div>
-
       <div class="control">
-        <label>Borde</label>
-        <input type="range" id="brde" min="100" max="200" value="150" step="0.1" />
+        <label>BORDES</label>
+        <input type="range" id="brde" min="100" max="200" value="100" step="0.1" />
       </div>
     </div>
 
     <!-- Texto editable -->
-    <div id="sampleText">
-      Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Ññ Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
+    <div id="sampleText" contenteditable="true">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Ññ Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
     </div>
   </div>
 
+  <!-- Control de fuente y estilo del thumb -->
   <script>
     const fontSizeSlider = document.getElementById('fontSize');
     const wghtSlider = document.getElementById('wght');
     const brdeSlider = document.getElementById('brde');
     const sampleText = document.getElementById('sampleText');
 
-    // Valores iniciales
-    let current = {
-      fontSize: parseFloat(fontSizeSlider.value),
-      wght: parseFloat(wghtSlider.value),
-      brde: parseFloat(brdeSlider.value)
-    };
+    function updateFont() {
+      const fontSize = fontSizeSlider.value;
+      const wght = wghtSlider.value;
+      const brde = brdeSlider.value;
 
-    // Interpolación suave
-    function smoothUpdate() {
-      const target = {
-        fontSize: parseFloat(fontSizeSlider.value),
-        wght: parseFloat(wghtSlider.value),
-        brde: parseFloat(brdeSlider.value)
-      };
+      // Aplicar a la fuente
+      sampleText.style.fontSize = `${fontSize}px`;
+      sampleText.style.fontVariationSettings = `'wght' ${wght}, 'BRDE' ${brde}`;
 
-      // Interpolación suave (0.05 = suavizado)
-      for (let prop in current) {
-        current[prop] += (target[prop] - current[prop]) * 0.1;
-      }
+      // Calcular border-radius: de 0px (BRDE=100) a 4px (BRDE=200)
+      const radius = ((brde - 100) / 100) * 3; // 0 a 4px
+      const radiusRounded = radius.toFixed(2);
 
-      // Aplicar con redondeo visual
-      sampleText.style.fontSize = `${current.fontSize.toFixed(2)}px`;
-      sampleText.style.fontVariationSettings = `'wght' ${current.wght.toFixed(2)}, 'BRDE' ${current.brde.toFixed(2)}`;
-
-      // Continuar animando hasta que todos los valores converjan
-      if (
-        Math.abs(target.fontSize - current.fontSize) > 0.01 ||
-        Math.abs(target.wght - current.wght) > 0.01 ||
-        Math.abs(target.brde - current.brde) > 0.01
-      ) {
-        requestAnimationFrame(smoothUpdate);
-      } else {
-        // Asegurar valor final exacto
-        sampleText.style.fontSize = `${target.fontSize}px`;
-        sampleText.style.fontVariationSettings = `'wght' ${target.wght}, 'BRDE' ${target.brde}`;
-      }
+      // Aplicar a todos los thumbs
+      const style = document.createElement('style');
+      style.id = 'thumb-style';
+      style.textContent = `
+        input[type="range"]::-webkit-slider-thumb {
+          border-radius: ${radiusRounded}px !important;
+        }
+        input[type="range"]::-moz-range-thumb {
+          border-radius: ${radiusRounded}px !important;
+        }
+      `;
+      // Limpiar estilos anteriores
+      const oldStyle = document.getElementById('thumb-style');
+      if (oldStyle) oldStyle.remove();
+      document.head.appendChild(style);
     }
 
-    // Escuchar cambios
-    fontSizeSlider.addEventListener('input', () => smoothUpdate());
-    wghtSlider.addEventListener('input', () => smoothUpdate());
-    brdeSlider.addEventListener('input', () => smoothUpdate());
+    fontSizeSlider.addEventListener('input', updateFont);
+    wghtSlider.addEventListener('input', updateFont);
+    brdeSlider.addEventListener('input', updateFont);
 
     // Inicializar
-    smoothUpdate();
+    updateFont();
   </script>
 </body>
 </html>
-
