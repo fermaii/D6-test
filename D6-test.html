@@ -19,7 +19,7 @@
       font-family: 'Diatype Mono Variable', monospace;
       background: transparent;
       color: #000;
-      font-size: 1.20rem;
+      font-size: 1.2rem;
       font-weight: 300;
       font-variation-settings: 'slnt' 0, 'MONO' 1;
       line-height: 1.2;
@@ -27,46 +27,42 @@
 
     .container {
       max-width: 100%;
-      padding: 0 8px;
+      padding: 0 12px;
       box-sizing: border-box;
     }
 
-    /* Sliders en fila */
-    .sliders-row {
-      display: flex;
-      flex-direction: row;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: nowrap;
-    }
+.sliders-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin-bottom: 12px;
+  justify-content: flex-start;
+}
 
-    .control {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex: 1;
-      min-width: 140px;
-      max-width: 180px;
-      white-space: nowrap;
-    }
+.control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 100px; /* clave: no crecen descontroladamente */
+  min-width: 90px;
+  max-width: 150px;
+}
 
     label {
-      display: block;
-      margin: 0;
-      font-size: 0.7em;
+      max-width: 70px;
+      font-size: 14px;
       font-weight: 500;
       white-space: nowrap;
       text-align: right;
-      width: 52px;
       flex-shrink: 0;
       line-height: 1;
+      letter-spacing: -0.01em;
     }
 
     input[type="range"] {
+      max-width: 70px;
       flex: 1;
-      width: auto;
-      height: 2px;
+      height: 1.2px;
       background: #000;
       border-radius: 1px;
       appearance: none;
@@ -74,16 +70,16 @@
       cursor: pointer;
     }
 
-    /* Thumb: cuadrado con border-radius controlado por BRDE */
+    /* Thumb con border-radius dinámico vía CSS variable */
     input[type="range"]::-webkit-slider-thumb {
+       max-width: 50px;
       appearance: none;
       width: 10px;
       height: 10px;
       background: #000;
       border: none;
-      border-radius: 0;
+      border-radius: var(--thumb-radius, 0);
       cursor: pointer;
-      /* El border-radius se aplica con JS */
     }
 
     input[type="range"]::-moz-range-thumb {
@@ -92,22 +88,22 @@
       height: 10px;
       background: #000;
       border: none;
-      border-radius: 0;
+      border-radius: var(--thumb-radius, 0);
       cursor: pointer;
     }
 
-    /* Texto editable y alineado a la izquierda */
+    /* Texto editable */
     #sampleText {
       font-family: 'Dados Variable', sans-serif;
       font-size: 3.8vw;
-      font-variation-settings: 'wght' 400, 'BRDE' 150;
+      font-variation-settings: 'wght' 400, 'BRDE' 100;
       text-align: left;
       letter-spacing: -0.002em;
       line-height: 1.25;
       margin: 0;
-      background: transparent;
       padding: 0;
       border: none;
+      background: transparent;
       word-wrap: break-word;
       overflow-wrap: break-word;
       min-height: 1.2em;
@@ -118,6 +114,26 @@
     @media (min-width: 600px) {
       #sampleText {
         font-size: 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .sliders-row {
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .control {
+        max-width: 120px;
+      }
+      label {
+        font-size: 13px;
+      }
+      body {
+        font-size: 1.1rem;
+        padding: 6px 0 10px;
+      }
+      .container {
+        padding: 0 10px;
       }
     }
   </style>
@@ -139,53 +155,45 @@
       </div>
     </div>
 
-    <!-- Texto editable -->
-    <div id="sampleText" contenteditable="true">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Ññ Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
+    <!-- Texto editable sin sugerencias de ortografía -->
+    <div 
+      id="sampleText" 
+      contenteditable="true"
+      spellcheck="false" 
+      autocorrect="off" 
+      autocapitalize="off" 
+      autocomplete="off">Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Ññ Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz
     </div>
   </div>
 
-  <!-- Control de fuente y estilo del thumb -->
   <script>
     const fontSizeSlider = document.getElementById('fontSize');
     const wghtSlider = document.getElementById('wght');
     const brdeSlider = document.getElementById('brde');
     const sampleText = document.getElementById('sampleText');
 
+    // Actualiza el border-radius del thumb usando una variable CSS
+    const updateThumbStyle = (brde) => {
+      const radius = ((brde - 100) / 100) * 3; // 0 a 3px
+      document.documentElement.style.setProperty('--thumb-radius', `${radius.toFixed(2)}px`);
+    };
+
     function updateFont() {
       const fontSize = fontSizeSlider.value;
       const wght = wghtSlider.value;
       const brde = brdeSlider.value;
 
-      // Aplicar a la fuente
       sampleText.style.fontSize = `${fontSize}px`;
       sampleText.style.fontVariationSettings = `'wght' ${wght}, 'BRDE' ${brde}`;
 
-      // Calcular border-radius: de 0px (BRDE=100) a 4px (BRDE=200)
-      const radius = ((brde - 100) / 100) * 3; // 0 a 4px
-      const radiusRounded = radius.toFixed(2);
-
-      // Aplicar a todos los thumbs
-      const style = document.createElement('style');
-      style.id = 'thumb-style';
-      style.textContent = `
-        input[type="range"]::-webkit-slider-thumb {
-          border-radius: ${radiusRounded}px !important;
-        }
-        input[type="range"]::-moz-range-thumb {
-          border-radius: ${radiusRounded}px !important;
-        }
-      `;
-      // Limpiar estilos anteriores
-      const oldStyle = document.getElementById('thumb-style');
-      if (oldStyle) oldStyle.remove();
-      document.head.appendChild(style);
+      updateThumbStyle(brde);
     }
 
     fontSizeSlider.addEventListener('input', updateFont);
     wghtSlider.addEventListener('input', updateFont);
     brdeSlider.addEventListener('input', updateFont);
 
-    // Inicializar
+    // Inicializar estilos
     updateFont();
   </script>
 </body>
