@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>D6 Control</title>
   <style>
-    /* Cargar fuente */
+    /* Cargar fuente desde GitHub (enlace corregido) */
     @font-face {
       font-family: 'Dados Variable';
       src: url('https://raw.githubusercontent.com/fermaii/D6-test/main/DadosVF.woff2') format('woff2');
@@ -31,22 +31,23 @@
       box-sizing: border-box;
     }
 
-.sliders-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 12px;
-  margin-bottom: 12px;
-  justify-content: flex-start;
-}
+    /* Contenedor de sliders */
+    .sliders-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
 
-.control {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1 1 100px; /* clave: no crecen descontroladamente */
-  min-width: 90px;
-  max-width: 150px;
-}
+    .control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1 1 100px;
+      min-width: 90px;
+      max-width: 150px; /* Controla el crecimiento máximo */
+    }
 
     label {
       max-width: 70px;
@@ -60,7 +61,7 @@
     }
 
     input[type="range"] {
-      max-width: 70px;
+      max-width: 70px; /* Ancho fijo como en el original */
       flex: 1;
       height: 1.2px;
       background: #000;
@@ -70,9 +71,8 @@
       cursor: pointer;
     }
 
-    /* Thumb con border-radius dinámico vía CSS variable */
+    /* Thumb del slider: tamaño y estilo original */
     input[type="range"]::-webkit-slider-thumb {
-       max-width: 50px;
       appearance: none;
       width: 10px;
       height: 10px;
@@ -92,7 +92,7 @@
       cursor: pointer;
     }
 
-    /* Texto editable */
+    /* Texto editable con tipografía variable */
     #sampleText {
       font-family: 'Dados Variable', sans-serif;
       font-size: 3.8vw;
@@ -117,21 +117,38 @@
       }
     }
 
-    @media (max-width: 480px) {
-      .sliders-row {
-        gap: 10px;
-        margin-bottom: 10px;
-      }
+    /* ----- Responsive: Apilar sliders en tablet y móvil ----- */
+@media (max-width: 768px) {
+  .sliders-row {
+    display: grid;
+    align-items: center;
+    gap: 22px;
+  }
+
       .control {
-        max-width: 120px;
+        flex-direction: row;
+        justify-content: flex-start;
+        width: 100%;
+        max-width: 650px;
       }
+
       label {
-        font-size: 13px;
+        text-align: left;
+        min-width: 50px;
       }
+
+      input[type="range"] {
+        max-width: 600px; /* Mantiene el ancho original */
+        flex: 1;
+        width: 100%;
+      }
+
+      /* Ajustes menores para pantallas pequeñas */
       body {
         font-size: 1.1rem;
         padding: 6px 0 10px;
       }
+
       .container {
         padding: 0 10px;
       }
@@ -143,7 +160,7 @@
     <div class="sliders-row">
       <div class="control">
         <label>TAMAÑO</label>
-        <input type="range" id="fontSize" min="100" max="250" value="200" step="0.1" />
+        <input type="range" id="fontSize" min="100" max="250" value="100" step="0.1" />
       </div>
       <div class="control">
         <label>PESO</label>
@@ -155,7 +172,6 @@
       </div>
     </div>
 
-    <!-- Texto editable sin sugerencias de ortografía -->
     <div 
       id="sampleText" 
       contenteditable="true"
@@ -172,9 +188,9 @@
     const brdeSlider = document.getElementById('brde');
     const sampleText = document.getElementById('sampleText');
 
-    // Actualiza el border-radius del thumb usando una variable CSS
+    // Actualiza el border-radius del thumb según BRDE (0px a 4px)
     const updateThumbStyle = (brde) => {
-      const radius = ((brde - 100) / 100) * 3; // 0 a 3px
+      const radius = ((brde - 100) / 100) * 4;
       document.documentElement.style.setProperty('--thumb-radius', `${radius.toFixed(2)}px`);
     };
 
@@ -193,7 +209,7 @@
     wghtSlider.addEventListener('input', updateFont);
     brdeSlider.addEventListener('input', updateFont);
 
-    // Inicializar estilos
+    // Inicializar
     updateFont();
   </script>
 </body>
